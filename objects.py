@@ -1,9 +1,10 @@
 from ctypes import c_uint8
 from ctypes import c_uint16
 from ctypes import c_float
+from ctypes import Structure
 
 class Categories:
-	
+
 	categories_list={
 		"C_person":c_uint8(14).value, 
 		"C_bycicle":c_uint8(1).value,
@@ -20,7 +21,7 @@ class Categories:
 		if category not in Categories.categories_list:
 			print("ERRORE!!!!")
 			return
-		self.category=category
+		self.category=c_uint8(category)
 
 	def getCategory(self):
 		return self.category
@@ -47,7 +48,7 @@ class LightStatus:
         if status not in LightStatus.statuses_list:
             print("ERRORE!!!!")
             return
-        self.status=status
+        self.status=c_uint8(status)
         
     def getStatus(self):
         return self.status
@@ -70,22 +71,55 @@ class TrafficLight:
         self.longitude=c_float(longitude).value 
         self.orientation=c_uint8(orientation).value
         self.time_to_change=c_uint8(time_to_change).value
+        
+    def serializeObject (self):
+        all_param = []
+        all_param.append(self.latitude)
+        all_param.append(self.longitude)
+        all_param.append(self.orientation)
+        all_param.append(self.status.convert())
+        all_param.append(self.time_to_change)
+        return all_param
     
+class c_TrafficLight (Structure):
+    _fields_ = [
+            ("latitude", c_float),
+            ("longitude", c_float),
+            ("orientation", c_uint8),
+            ("status", c_uint8),
+            ("time_to_change", c_uint8)]
     
 class RoadUser:
 	
-	def __init__ (self, latitude, longitude, speed, orientation, category):
-		self.category=Categories(category)
-		self.latitude=c_float(latitude).value
-		self.longitude=c_float(longitude).value
-		self.speed=c_uint8(speed).value
-		self.orientation=c_uint16(orientation).value
-		return
+    def __init__ (self, latitude, longitude, speed, orientation, category):
+        self.category=Categories(category)
+        self.latitude=c_float(latitude).value
+        self.longitude=c_float(longitude).value
+        self.speed=c_uint8(speed).value
+        self.orientation=c_uint16(orientation).value
+        return
 	
-	def getAttributes (self):
-		attrList = [self.latitude, self.longitude, self.speed, self.orientation, self.category.convert()]
-		return attrList
+    def getAttributes (self):
+        attrList = [self.latitude, self.longitude, self.speed, self.orientation, self.category.convert()]
+        return attrList
+    
+    def serializeObject (self):
+        all_param = []
+        all_param.append(self.latitude)
+        all_param.append(self.longitude)
+        all_param.append(self.speed)
+        all_param.append(self.orientation)
+        all_param.append(self.category.convert())
+        return all_param
 
-	def __str__ (self):
-		R="latitude: "+str(self.latitude)+"\nlongitude: "+str(self.longitude)+"\nspeed: "+str(self.speed)+"\norientation: "+str(self.orientation)+"\ncategory: "+str(self.category)
-		return R
+    def __str__ (self):
+        R="latitude: "+str(self.latitude)+"\nlongitude: "+str(self.longitude)+"\nspeed: "+str(self.speed)+"\norientation: "+str(self.orientation)+"\ncategory: "+str(self.category)
+        return R
+    
+class c_RoadUser (Structure):
+    _fields_ = [
+            ("latitude", c_float),
+            ("longitude", c_float),
+            ("speed", c_uint8),
+            ("orientation", c_uint16),
+            ("category", c_uint8)]
