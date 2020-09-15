@@ -21,13 +21,13 @@ class Categories:
 		if category not in Categories.categories_list:
 			print("ERRORE!!!!")
 			return
-		self.category=c_uint8(category)
+		self.category=c_uint8(Categories.categories_list[category])
 
 	def getCategory(self):
 		return self.category
 
 	def convert(self):
-		return Categories.categories_list.get(self.category)
+		return self.category
 		
 		
 	def printCategories ():
@@ -48,13 +48,13 @@ class LightStatus:
         if status not in LightStatus.statuses_list:
             print("ERRORE!!!!")
             return
-        self.status=c_uint8(status)
+        self.status=c_uint8(LightStatus.statuses_list[status])
         
     def getStatus(self):
         return self.status
     
     def convert(self):
-        return LightStatus.statuses_list.get(self.status)
+        return self.status
     
     def printStatuses():
         for s in LightStatus.statuses_list:

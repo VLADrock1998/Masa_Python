@@ -4,13 +4,15 @@ from messages import c_MasaMessage
 
 
 lib=CDLL("./masa_c_lib/masa_python_c_lib.lib")
-lib.initialize_message.argtypes = [c_int, c_int]
-lib.initialize_message(c_int(9), c_int(2))
-a = lib.send_message()
-print(a)
-lib.saluto()
-#lib.initialize_message.restypes = [POINTER(c_MasaMessage)]
+lib.initialize_message.argtypes = [c_uint16, c_uint16]
+lib.initialize_message.restypes = [POINTER(c_MasaMessage)]
+lib.prepare_message.argtypes = []
 
+
+res = lib.initialize_message(c_uint16(3), c_uint16(3))
+res = cast(res, POINTER(c_MasaMessage))
+
+print(res[0].num_lights)
 
 
 

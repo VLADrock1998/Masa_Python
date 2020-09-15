@@ -1,6 +1,5 @@
 from messages import MasaMessage
 from objects import RoadUser, TrafficLight
-import socket
 
 objects = []
 objects.append(RoadUser(0.5, 0.6, 100, 70, "C_person"))
@@ -12,15 +11,4 @@ lights.append(TrafficLight(3.5, 0.5, 54, "L_yellow", 8))
 lights.append(TrafficLight(2.9, 0.2, 70, "L_red", 10))
 message = MasaMessage(20, 40, 3, objects, lights)
 
-print("Messaggio:")
-to_send = ""
-for p in message.serializeMessage():
-    print(p)
-    to_send+=str(p)
-    to_send+="%"
-    
-    
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect((socket.gethostname(), 8891))
-
-s.send(bytes(to_send, "utf-8"))
+message.send(8891, "127.0.0.1")

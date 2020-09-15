@@ -19,14 +19,25 @@ struct PMasaMessage
     uint32_t cam_idx;
     uint64_t t_stamp_ms;
     uint16_t num_objects;
+    uint16_t num_lights;
     RoadUser* objects;
     TrafficLight* lights;
 };
 
-extern "C" int send_message (MasaMessage*);
+extern "C" int saluto();
 
-extern "C" PMasaMessage* initialize_message (int, int);
+extern "C" PMasaMessage* create_MasaMessage (uint32_t, uint64_t, uint16_t, uint16_t, RoadUser*, TrafficLight*);
 
-extern "C" void saluto ();
+extern "C" MasaMessage* cast_MasaMessage (PMasaMessage*);
+
+extern "C" int send_MasaMessage (PMasaMessage*, int, char*);
+
+extern "C" RoadUser* create_RoadUser (uint16_t);
+
+extern "C" void initialize_RoadUser (RoadUser*, float, float, uint8_t, uint16_t, uint8_t);
+
+extern "C" TrafficLight* create_TrafficLight (uint16_t);
+
+extern "C" void initialize_TrafficLight (TrafficLight*, float, float, uint8_t, uint8_t, uint8_t);
 
 #endif
