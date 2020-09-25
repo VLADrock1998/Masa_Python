@@ -1,8 +1,30 @@
 #include "masa_python_c_lib.h"
 
-int saluto()
+PMasaMessage* receive_MasaMessage (char* raw_data, uint32_t data_len)
 {
-	return 99;
+	MasaMessage* m = new MasaMessage;
+	std::string s(raw_data, data_len);
+	
+	std::istringstream is(s);
+        cereal::PortableBinaryInputArchive retrieve(is);
+        try
+        {
+            retrieve(*m);
+        }
+        catch (std::bad_alloc& ba)
+        {
+            std::cout << "Packet drop"<<std::endl;
+        }
+	
+	PMasaMessage* message = new PMasaMessage;
+	message->cam_idx = m->cam_idx;
+	message->t_stamp_ms = m->t_stamp_ms;
+	message->num_objects = m->num_objects;
+    	message->num_lights = m->lights.size();
+    	message->objects = m->objects.data();
+    	message->lights = m->lights.data();
+    	
+	return message;
 }
 
 PMasaMessage* create_MasaMessage (uint32_t cam_idx, uint64_t t_stamp_ms, uint16_t num_objects, uint16_t num_lights, RoadUser* objects, TrafficLight* lights)
@@ -18,7 +40,7 @@ PMasaMessage* create_MasaMessage (uint32_t cam_idx, uint64_t t_stamp_ms, uint16_
     	
 }
 
-MasaMessage* cast_message (PMasaMessage* message)
+MasaMessage* cast_MasaMessage (PMasaMessage* message)
 {
 	MasaMessage* m = new MasaMessage;
 	
@@ -46,7 +68,7 @@ int send_MasaMessage (PMasaMessage* message, int port, char* ip)
     	Communicator<MasaMessage> Comm(SOCK_DGRAM);
 	Comm.open_client_socket((char *) ip, port);
 	std::stringbuf s;
-	Comm.serialize_coords(m,&s);
+	Comm.serialize_coords(m, &s);
 	Comm.send_message(m, port);
 	
     	return 0;

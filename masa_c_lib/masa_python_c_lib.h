@@ -24,7 +24,7 @@ struct PMasaMessage
     TrafficLight* lights;
 };
 
-extern "C" int saluto();
+extern "C" PMasaMessage* receive_MasaMessage (char*, uint32_t);
 
 extern "C" PMasaMessage* create_MasaMessage (uint32_t, uint64_t, uint16_t, uint16_t, RoadUser*, TrafficLight*);
 
