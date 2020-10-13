@@ -14,7 +14,8 @@
 #include <string>
 #include <masa.hpp>
 
-struct PMasaMessage
+
+struct PMasaMessage	//This is a c version of the c_MasaMessage python object. They are the exact same thing!
 {
     uint32_t cam_idx;
     uint64_t t_stamp_ms;
@@ -41,3 +42,4 @@ extern "C" TrafficLight* create_TrafficLight (uint16_t);
 extern "C" void initialize_TrafficLight (TrafficLight*, float, float, uint8_t, uint8_t, uint8_t);
 
 #endif
+

@@ -1,7 +1,5 @@
-from ctypes import c_uint8
-from ctypes import c_uint16
-from ctypes import c_float
-from ctypes import Structure
+from ctypes import c_float, c_uint8, c_uint16, Structure
+
 
 class Categories:
 
@@ -18,15 +16,25 @@ class Categories:
             "C_rover":c_uint8(40).value}
 
     def __init__(self, category):
+        """
+        category must be a string.
+        """
         if category not in Categories.categories_list:
-            print("ERRORE!!!!")
+            print("Error: given category not in categories list.")
             return
         self.category=c_uint8(Categories.categories_list[category])
 
     def convert(self):
+        """
+        this returns the u_int equivalent of the given gategory string
+        """
         return self.category
 
     def name(value):
+        """
+        This is used to compose a MasaMessage from raw_data.
+        It returns the name of the category of the given u_int.
+        """
         for k,v in Categories.categories_list.items():
             if v == value:
                 return k
@@ -38,6 +46,7 @@ class Categories:
     def __str__(self):
         return str(self.category.value)
 
+
 class LightStatus:
 
     statuses_list={
@@ -46,15 +55,25 @@ class LightStatus:
             "L_red":c_uint8(3).value}
 
     def __init__(self, status):
+        """
+        status must be a string.
+        """
         if status not in LightStatus.statuses_list:
-            print("ERRORE!!!!")
+            print("Error: given status not in statuses list.")
             return
         self.status=c_uint8(LightStatus.statuses_list[status])
 
     def convert(self):
+        """
+        this returns the u_int equivalent of the given light string
+        """
         return self.status
 
     def name(value):
+        """
+        This is used to compose a MasaMessage from raw_data.
+        It returns the name of the light of the given u_int.
+        """
         for k,v in LightStatus.statuses_list.items():
             if v == value:
                 return k
@@ -65,6 +84,7 @@ class LightStatus:
 
     def __str__(self):
         return str(self.status.value)
+
 
 class TrafficLight:
 
@@ -78,13 +98,6 @@ class TrafficLight:
     def __str__(self):
         return f"TrafficLight with: latitude={self.latitude}, longitude={self.longitude}, orientation={self.orientation}, status={self.status}, time_to_change={self.time_to_change}."
 
-class c_TrafficLight (Structure):
-    _fields_ = [
-            ("latitude", c_float),
-            ("longitude", c_float),
-            ("orientation", c_uint8),
-            ("status", c_uint8),
-            ("time_to_change", c_uint8)]
 
 class RoadUser:
 
@@ -105,9 +118,26 @@ class RoadUser:
 
 
 class c_RoadUser (Structure):
+    """
+    This is the mid version of a python RoadUser.
+    In normal conditions you are not supposed to use this object!
+    """
     _fields_ = [
             ("latitude", c_float),
             ("longitude", c_float),
             ("speed", c_uint8),
             ("orientation", c_uint16),
             ("category", c_uint8)]
+
+
+class c_TrafficLight (Structure):
+    """
+    This is the mid version of a python TrafficLight.
+    In normal conditions you are not supposed to use this object!
+    """
+    _fields_ = [
+            ("latitude", c_float),
+            ("longitude", c_float),
+            ("orientation", c_uint8),
+            ("status", c_uint8),
+            ("time_to_change", c_uint8)]

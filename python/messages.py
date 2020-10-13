@@ -1,38 +1,29 @@
-from ctypes import c_int
-from ctypes import c_float
-from ctypes import c_uint8
-from ctypes import c_uint16
-from ctypes import c_uint32
-from ctypes import c_uint64
-from ctypes import c_char
-from ctypes import CDLL
-from ctypes import Structure
-from ctypes import cast
-from ctypes import POINTER
-from objects import c_TrafficLight
-from objects import c_RoadUser
-from objects import RoadUser
-from objects import TrafficLight
-from objects import Categories
-from objects import LightStatus
+from ctypes import cast, c_char, CDLL, c_float, c_int, c_uint8, c_uint16, c_uint32, c_uint64, POINTER, Structure
+from objects import *
+
 
 class Message():
-
+    """
+    Primitive message class.
+    This is the python version of the "message" in C.
+    All future messages based of this class must extend it.
+    """
     def __init__(self, cam_idx, t_stamp_ms):
         self.cam_idx = c_uint32(cam_idx).value
         self.t_stamp_ms = c_uint64(t_stamp_ms).value
 
     def send(self, cam_idx, t_stamp_ms):
-        #da implementare send di message normale
+        #TODO Implement the standard message class
         pass
 
     def __str__(self):
         return f"Message with: cam_idx={self.cam_idx}, t_stamp_ms={self.t_stamp_ms}."
 
 
-
 class MasaMessage(Message):
-
+    """
+    This is the python version of the "MasaMessage" C class.
+    """
     def __init__ (self, cam_idx, t_stamp_ms, num_objects, objects, lights):
         #Initializing superclass Message
         Message.__init__(self, cam_idx, t_stamp_ms)
@@ -44,7 +35,7 @@ class MasaMessage(Message):
 
     def send(self, ip, port):
         #Initializing C lib functions
-        lib=CDLL("./masa_c_lib/masa_python_c_lib.lib")
+        lib=CDLL("../masa_c_lib/masa_python_c_lib.lib")
         lib.create_MasaMessage.argtypes = [c_uint32, c_uint64, c_uint16, c_uint16, POINTER(c_RoadUser), POINTER(c_TrafficLight)]
         lib.create_MasaMessage.restypes = [POINTER(c_MasaMessage)]
         lib.send_MasaMessage.argtypes = [POINTER(c_MasaMessage), c_int, POINTER(c_char)]
@@ -74,7 +65,7 @@ class MasaMessage(Message):
 
     def receive(raw_data):
         #Initializing C lib functions
-        lib=CDLL("./masa_c_lib/masa_python_c_lib.lib")
+        lib=CDLL("../masa_c_lib/masa_python_c_lib.lib")
         lib.receive_MasaMessage.argtypes = [POINTER(c_char), c_uint32]
         lib.receive_MasaMessage.restypes = [POINTER(c_MasaMessage)]
         #Preparing the data for the c lib
@@ -86,7 +77,7 @@ class MasaMessage(Message):
         #Converting objects and lights
         objects = []
         for i in range(message[0].num_objects):
-            o = RoadUser(message[0].objects[i].latitude, message[0].objects[i].longitude, message[0].objects[i].speed, message[0].objects[i].orientation, Categories.name(message[0].objects[i].category))
+            o = RoadUser(message[0].objects[i].latitude, message[0].objects[i].longitude, message[0].objects[i].speed, message[0].objects[i].orientation, 		Categories.name(message[0].objects[i].category))
             objects.append(o)
         lights = []
         for i in range(message[0].num_lights):
@@ -100,6 +91,10 @@ class MasaMessage(Message):
 
 
 class c_MasaMessage(Structure):
+    """
+    This is the mid version of a python MasaMessage.
+    In normal conditions you are not supposed to use this object!
+    """
     _fields_ = [
             ("cam_idx", c_uint32),
             ("t_stamp_ms", c_uint64),
@@ -111,52 +106,11 @@ class c_MasaMessage(Structure):
 
 
 class c_Message(Structure):
+    """
+    This is the mid version of a python Message.
+    In normal conditions you are not supposed to use this object!
+    """
     _fields_ = [
             ("cam_idx", c_uint32),
             ("t_stamp_ms", c_uint64)
             ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

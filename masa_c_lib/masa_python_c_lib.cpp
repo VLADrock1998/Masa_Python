@@ -1,5 +1,6 @@
 #include "masa_python_c_lib.h"
 
+
 PMasaMessage* receive_MasaMessage (char* raw_data, uint32_t data_len)
 {
 	MasaMessage* m = new MasaMessage;
@@ -37,10 +38,9 @@ PMasaMessage* create_MasaMessage (uint32_t cam_idx, uint64_t t_stamp_ms, uint16_
     	message->objects = objects;
     	message->lights = lights;
     	return message;
-    	
 }
 
-MasaMessage* cast_MasaMessage (PMasaMessage* message)
+MasaMessage* cast_MasaMessage (PMasaMessage* message)//This function casts the Python mid version (c_MasaMessage) to a definitive C MasaMessage
 {
 	MasaMessage* m = new MasaMessage;
 	
@@ -51,8 +51,6 @@ MasaMessage* cast_MasaMessage (PMasaMessage* message)
 	m->objects.clear();
 	for (int i=0; i<message->num_objects; i++)
 		m->objects.push_back(message->objects[i]);
-
-		
 	
 	m->lights.clear();
 	for (int i=0; i<message->num_lights; i++)
@@ -74,7 +72,7 @@ int send_MasaMessage (PMasaMessage* message, int port, char* ip)
     	return 0;
 }
 
-RoadUser* create_RoadUser (uint16_t num_objects)
+RoadUser* create_RoadUser (uint16_t num_objects)//Function that creates an array of RoadUsers then returns the pointer to it.
 {
 	RoadUser* objects = new RoadUser[num_objects];
 	return objects;
@@ -89,7 +87,7 @@ void initialize_RoadUser (RoadUser* object, float latitude, float longitude, uin
 	object->category = (Categories)category;
 }
 
-TrafficLight* create_TrafficLight (uint16_t num_lights)
+TrafficLight* create_TrafficLight (uint16_t num_lights)//Function that creates an array of TrafficLights then returns the pointer to it.
 {
 	TrafficLight* lights = new TrafficLight[num_lights];
 	return lights;
@@ -103,26 +101,4 @@ void initialize_TrafficLight (TrafficLight* light, float latitude, float longitu
 	light->status = (LightStatus)status;
 	light->time_to_change = time_to_change;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
